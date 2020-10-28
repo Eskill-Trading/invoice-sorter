@@ -6,8 +6,9 @@ import re
 # Load config file
 with open("config.json") as conf:
     config = json.load(conf)
-
-source = config["reprint"]
+    source = config["reprint"]
+    regex = config["regex"]
+    print(regex)
 
 
 # Locate files in Reprint folder
@@ -18,7 +19,7 @@ for root, dirs, files in os.walk(source):
     print("Files: ", files)
     print()
     for file in files:
-        if re.search(r".\.pdf$", file):
+        if re.search(regex, file):
             invoices.append(file)
     if (root == source):
         break
