@@ -1,1 +1,8 @@
-{"reprint": "", "regex": ""}
+{
+    "reprint": "/home/archais/invoice-sorter/test",
+    "regex": {
+        "pdf": ".\\.pdf$",
+        "invoice number": "\\d\\d\\d\\d\\d",
+        "customer": "[A-Z][A-Z][A-Z]\\d\\d\\dZ*"
+    }
+}
