@@ -1,7 +1,7 @@
 import json
 import os
 import re
-from datetime import datetime
+from datetime import date
 from time import sleep
 
 import PyPDF2
@@ -43,15 +43,15 @@ while not sleep(1):
                 if not (customer := re.findall(regex["customer"], text)[0]):
                     raise Exception("Unable to find customer")
                 print("Customer:", customer)
-                dateTime = docInfo[r"/ModDate"][2:-7]
-                if not dateTime.isnumeric() or len(dateTime) != 14:
-                    raise Exception("Bad datetime")
-                dateTime = datetime(int(dateTime[0:4]), int(dateTime[4:6]), int(dateTime[6:8]), int(dateTime[8:10]), int(dateTime[10:12]), int(dateTime[12:]))
-                print("Fiscalised:", dateTime.strftime(r"%d %B %Y %H:%M:%S"))
-                if not os.path.isdir(destination := source + os.sep + str(dateTime.year) + os.sep + dateTime.strftime("%B %Y")):
+                fiscalDate = docInfo[r"/ModDate"][2:10]
+                if not fiscalDate.isnumeric() or len(fiscalDate) != 8:
+                    raise Exception("Bad date")
+                fiscalDate = date(int(fiscalDate[0:4]), int(fiscalDate[4:6]), int(fiscalDate[6:8]))
+                print("Fiscalised:", fiscalDate.strftime(r"%d %B %Y"))
+                if not os.path.isdir(destination := source + os.sep + str(fiscalDate.year) + os.sep + fiscalDate.strftime("%B %Y")):
                     print("Folder(s) not found- generating now.")
                     os.makedirs(destination)
-                newName = f"{invoiceNum}_{customer}_{dateTime.strftime('%Y%m%d_%H%M%S')}.pdf"
+                newName = f"{invoiceNum}_{customer}_{fiscalDate.strftime(r'%Y%m%d')}_{'original' if 'ORIGINAL .' in text else 'copy'}.pdf"
                 destination += os.sep + newName
             except Exception as error:
                 print(error)
