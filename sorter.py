@@ -13,7 +13,7 @@ with open("config.json") as conf:
     regex = config["regex"]
 
 
-while not sleep(10):
+while not sleep(1):
     # Locate files in Reprint folder
     invoices = []
     for root, dirs, files in os.walk(source):
@@ -24,7 +24,6 @@ while not sleep(10):
             break
 
     if not invoices:
-        print("No pending files.", end= "\n\n")
         continue
     print("Pending PDFs:", invoices, end= "\n\n")
 
