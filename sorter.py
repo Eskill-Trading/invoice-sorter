@@ -48,7 +48,7 @@ while not sleep(1):
                     raise Exception("Bad datetime")
                 dateTime = datetime(int(dateTime[0:4]), int(dateTime[4:6]), int(dateTime[6:8]), int(dateTime[8:10]), int(dateTime[10:12]), int(dateTime[12:]))
                 print("Fiscalised:", dateTime.strftime(r"%d %B %Y %H:%M:%S"))
-                if not os.path.isdir(destination = source + os.sep + str(dateTime.year) + os.sep + dateTime.strftime("%B %Y")):
+                if not os.path.isdir(destination := source + os.sep + str(dateTime.year) + os.sep + dateTime.strftime("%B %Y")):
                     print("Folder(s) not found- generating now.")
                     os.makedirs(destination)
                 newName = f"{invoiceNum}_{customer}_{dateTime.strftime('%Y%m%d_%H%M%S')}.pdf"
