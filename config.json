@@ -1,5 +1,5 @@
 {
-    "reprint": "/home/archais/invoice-sorter/test",
+    "reprint": "/absolute/path/to/invoices",
     "regex": {
         "pdf": ".\\.pdf$",
         "invoice number": "\\d\\d\\d\\d\\d",
