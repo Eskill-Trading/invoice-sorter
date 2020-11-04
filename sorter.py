@@ -6,6 +6,17 @@ from time import sleep
 
 import PyPDF2
 
+
+def invoiceDuplicate(dest: str, version: int) :
+    "Append copy number to invoice if multiples found."
+    if os.path.isfile((dest[:-len(".pdf")] if not re.search(r"_\d$", dest[:-len(".pdf")]) else dest[:-len("_1.pdf")]) + f"_{str(version)}.pdf"):
+        version += 1
+        newDestination = invoiceDuplicate(dest, version)
+    else:
+        newDestination = (dest[:-len(".pdf")] if not re.search(r"_\d$", dest[:-len(".pdf")]) else dest[:-len("_1.pdf")]) + f"_{str(version)}.pdf"
+    return newDestination
+
+
 # Load config file
 with open("config.json") as conf:
     config = json.load(conf)
@@ -51,11 +62,15 @@ while not sleep(1):
                 if not os.path.isdir(destination := source + os.sep + str(fiscalDate.year) + os.sep + fiscalDate.strftime("%B %Y")):
                     print("Folder(s) not found- generating now.")
                     os.makedirs(destination)
-                newName = f"{invoiceNum}_{customer}_{fiscalDate.strftime(r'%Y%m%d')}_{'original' if 'ORIGINAL .' in text else 'copy'}.pdf"
+                newName = f"{invoiceNum}_{customer}_{fiscalDate.strftime(r'%Y%m%d')}.pdf"
                 destination += os.sep + newName
             except Exception as error:
                 print(error)
                 invoice.close()
+
         if destination:
+            if os.path.isfile(destination):
+                print("Duplicate found.")
+                destination = invoiceDuplicate(destination, 1)
             os.rename(sourceFile, destination)
             print("Destination:", destination, end= "\n\n")
