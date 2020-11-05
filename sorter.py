@@ -15,6 +15,7 @@ def main():
         config = json.load(conf)
         source = config["reprint"]
         regex = config["regex"]
+    del conf, config
 
 
     while not sleep(1):
@@ -29,6 +30,9 @@ def main():
 
         if not invoices:
             continue
+        
+        del root, dirs, file, files
+
         print("Pending PDFs:", invoices, end= "\n\n")
 
 
@@ -36,6 +40,7 @@ def main():
         for file in invoices:
             sourceFile = source + os.sep + file
             destination = ""
+            pdf, docInfo, invoiceNum, text, fiscalDate, newName = "", "", "", "", "", ""
             with open(sourceFile, "rb") as invoice:
                 try:
                     pdf = PyPDF2.PdfFileReader(invoice)
@@ -68,8 +73,10 @@ def main():
                 os.rename(sourceFile, destination)
                 print("Destination:", destination, end= "\n\n")
 
+        del file, invoices, sourceFile, destination, invoice, pdf, docInfo, invoiceNum, text, fiscalDate, newName
 
-def invoiceDuplicate(dest: str, version: int) :
+
+def invoiceDuplicate(dest: str, version: int):
     "Append copy number to invoice if multiples found."
     if os.path.isfile((dest[:-len(".pdf")] if not re.search(r"_\d$", dest[:-len(".pdf")]) else dest[:-len("_1.pdf")]) + f"_{str(version)}.pdf"):
         version += 1
