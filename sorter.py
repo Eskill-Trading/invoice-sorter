@@ -4,10 +4,12 @@ import re
 from datetime import datetime
 from time import sleep
 
+import oschmod
 import PyPDF2
 
 # List of erroneous PDFs to be ignored
 errorList = []
+
 
 def main():
     # Load config file
@@ -16,7 +18,6 @@ def main():
         source = config["reprint"]
         regex = config["regex"]
     del conf, config
-
 
     while not sleep(1):
         # Locate files in Reprint folder
@@ -30,11 +31,10 @@ def main():
 
         if not invoices:
             continue
-        
+
         del root, dirs, file, files
 
-        print("Pending PDFs:", invoices, end= "\n\n")
-
+        print("Pending PDFs:", invoices, end="\n\n")
 
         # Get invoice info, rename pdf and move to correct folder
         for file in invoices:
@@ -55,7 +55,8 @@ def main():
                     fiscalDate = docInfo[r"/ModDate"][2:10]
                     if not fiscalDate.isnumeric() or len(fiscalDate) != 8:
                         raise Exception("Bad date")
-                    fiscalDate = datetime(int(fiscalDate[0:4]), int(fiscalDate[4:6]), int(fiscalDate[6:8]))
+                    fiscalDate = datetime(int(fiscalDate[0:4]), int(
+                        fiscalDate[4:6]), int(fiscalDate[6:8]))
                     print("Fiscalised:", fiscalDate.strftime(r"%d %B %Y"))
                     if not os.path.isdir(destination := source + os.sep + str(fiscalDate.year) + os.sep + fiscalDate.strftime("%B %Y")):
                         print("Folder(s) not found- generating now.")
@@ -71,7 +72,8 @@ def main():
                     print("Duplicate found.")
                     destination = invoiceDuplicate(destination, 1)
                 os.rename(sourceFile, destination)
-                print("Destination:", destination, end= "\n\n")
+                oschmod.set_mode(destination, "a=,a+r")
+                print("Destination:", destination, end="\n\n")
 
         del file, invoices, sourceFile, destination, invoice, pdf, docInfo, invoiceNum, text, fiscalDate, newName
 
@@ -82,7 +84,8 @@ def invoiceDuplicate(dest: str, version: int):
         version += 1
         newDestination = invoiceDuplicate(dest, version)
     else:
-        newDestination = (dest[:-len(".pdf")] if not re.search(r"_\d$", dest[:-len(".pdf")]) else dest[:-len("_1.pdf")]) + f"_{str(version)}.pdf"
+        newDestination = (dest[:-len(".pdf")] if not re.search(
+            r"_\d$", dest[:-len(".pdf")]) else dest[:-len("_1.pdf")]) + f"_{str(version)}.pdf"
     return newDestination
 
 

@@ -1,1 +1,2 @@
+oschmod
 PyPDF2
