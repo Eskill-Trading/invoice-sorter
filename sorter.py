@@ -72,7 +72,7 @@ def main():
                     print("Duplicate found.")
                     destination = invoiceDuplicate(destination, 1)
                 os.rename(sourceFile, destination)
-                oschmod.set_mode(destination, "a=,a+r")
+                oschmod.set_mode(destination, "a=,a+r,u+w")
                 print("Destination:", destination, end="\n\n")
 
         del file, invoices, sourceFile, destination, invoice, pdf, docInfo, invoiceNum, text, fiscalDate, newName
